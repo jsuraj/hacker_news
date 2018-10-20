@@ -1,8 +1,8 @@
 # hacker_news
 
-A new Flutter project.
+A simple app for Hacker News.
 
-## Getting Started
+## Screenshot
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+<!-- ![Screenshot](/Screenshot.png =480*640) -->
+<img src='Screenshot.png' width='300' />
