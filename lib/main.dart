@@ -29,21 +29,46 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final String url =
-      'https://hn.algolia.com/api/v1/search_by_date?tags=front_page';
-  List newsItems;
+      'https://hn.algolia.com/api/v1/search_by_date?tags=front_page&page=';
+  List newsItems =[];
   bool isLoading = true;
+  int currentPage = 0;
+
+
 
   Widget get _getPageToDisplay {
     if (isLoading) {
       return _loadingView;
     } else {
-      return _homeView;
+      return _homeWithLoadMore;
     }
   }
 
   Widget get _loadingView {
     return Center(
       child: CircularProgressIndicator(),
+    );
+  }
+
+  Widget get _homeWithLoadMore {
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Container(
+            height: 500.0,
+            child: _homeView
+          ),
+          FlatButton(
+            color: Colors.amber,
+            child: Text("Load More"),
+            onPressed: (){
+              this.loadNextPage();
+            },
+          )
+
+        ]
+      )
     );
   }
 
@@ -111,15 +136,25 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<String> getData() async {
+    String urlWithPageNumber = url+currentPage.toString(); 
+    print(urlWithPageNumber);
     var response = await http
-        .get(Uri.encodeFull(url), headers: {"Accept": "application/json"});
-    // print(response.body);
+        .get(Uri.encodeFull(urlWithPageNumber), headers: {"Accept": "application/json"});
+    print(response);
     setState(() {
-      newsItems = json.decode(response.body)['hits'];
+      newsItems.addAll(json.decode(response.body)['hits']);
       isLoading = false;
     });
     print("Success");
+    print("Length after get Data :"+newsItems.length.toString());
     return "Success";
+  }
+  void loadNextPage(){
+  // setState(() {
+  //     currentPage = currentPage+1;
+  //   });
+  print("current page:"+currentPage.toString());
+  getData();    
   }
 
   void handleTap(url) async {
